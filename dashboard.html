@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estithmar Holding — Digital Performance Dashboard | Jan–May 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --navy:#001543;--blue:#0071CE;--teal:#15F4EE;--gray:#C7C8CA;
+  --light:#F2F5FB;--white:#FFFFFF;--up:#1FBF75;--down:#E5484D;--ink:#0C1B33;
+  --feb:#FFB703;--mar:#FB8500;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Tajawal',system-ui,sans-serif;background:var(--light);color:var(--ink);line-height:1.45;}
+.wrap{max-width:1320px;margin:0 auto;padding:32px 28px 72px;}
+
+header{background:linear-gradient(125deg,#001543 0%,#002e87 100%);color:#fff;border-radius:18px;padding:36px 42px;position:relative;overflow:hidden;margin-bottom:36px;}
+header::before{content:"";position:absolute;right:-80px;top:-80px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(21,244,238,.14),transparent 65%);}
+header::after{content:"";position:absolute;left:-40px;bottom:-60px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(0,113,206,.15),transparent 65%);}
+.header-inner{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;}
+.eyebrow{letter-spacing:3px;text-transform:uppercase;font-size:11.5px;color:var(--teal);font-weight:700;margin-bottom:8px;}
+header h1{font-size:32px;font-weight:900;line-height:1.2;}
+header p{color:rgba(255,255,255,.65);font-weight:300;margin-top:8px;font-size:15px;}
+.month-pills{display:flex;gap:8px;flex-wrap:wrap;}
+.mpill{display:inline-block;padding:7px 16px;border-radius:30px;font-size:12.5px;font-weight:700;border:1.5px solid rgba(255,255,255,.25);color:rgba(255,255,255,.7);cursor:pointer;transition:all .18s ease;user-select:none;}
+.mpill:hover:not(.active){background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.5);color:#fff;}
+.mpill.active{background:var(--teal);border-color:var(--teal);color:var(--navy);}
+.mpill.ytd-pill{border-color:rgba(21,244,238,.55);color:var(--teal);font-weight:800;}
+.mpill.ytd-pill.active{background:var(--teal);border-color:var(--teal);color:var(--navy);}
+.mpill.almaha-pill{border-color:rgba(21,244,238,.4);color:var(--teal);font-weight:800;letter-spacing:.3px;}
+.mpill.almaha-pill.active{background:var(--teal);border-color:var(--teal);color:var(--navy);}
+/* ── Monthly view ── */
+.month-view .section-header{margin-top:28px;}
+.content-pills{display:flex;gap:12px;margin:4px 0 4px;flex-wrap:wrap;}
+.cp{background:#fff;border:1px solid #e2e8f2;border-radius:12px;padding:16px 20px;flex:1;min-width:90px;text-align:center;box-shadow:0 1px 4px rgba(0,21,67,.04);}
+.cp .cp-n{font-size:34px;font-weight:900;color:var(--navy);line-height:1;}
+.cp .cp-l{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:#8492a6;margin-top:5px;}
+.hlbox{background:#fff;border:1px solid #e2e8f2;border-radius:14px;padding:20px 24px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,21,67,.04);}
+.hlbox h3{font-size:14px;font-weight:800;color:var(--navy);margin-bottom:12px;letter-spacing:.2px;}
+.hlbox ul{list-style:none;padding:0;margin:0;}
+.hlbox li{font-size:13px;color:#374151;padding:6px 0 6px 18px;border-bottom:1px solid #f4f6fb;line-height:1.55;position:relative;}
+.hlbox li:last-child{border-bottom:none;}
+.hlbox li::before{content:"→";color:var(--blue);font-weight:700;position:absolute;left:0;}
+
+.section-header{display:flex;align-items:center;gap:14px;margin:40px 0 20px;}
+.sec-num{font-size:38px;font-weight:900;color:rgba(0,113,206,.22);line-height:1;min-width:44px;}
+.sec-title{font-size:22px;font-weight:800;color:var(--navy);}
+.sec-sub{font-size:13px;color:#8492a6;margin-left:auto;font-weight:400;}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px;}
+.kpi{background:#fff;border-radius:14px;padding:18px 20px;border:1px solid #e2e8f2;box-shadow:0 1px 4px rgba(0,21,67,.05);}
+.kpi .lbl{font-size:11.5px;color:#8492a6;font-weight:600;text-transform:uppercase;letter-spacing:.6px;}
+.kpi .val{font-size:28px;font-weight:900;color:var(--navy);margin:5px 0 4px;}
+.kpi .sub{display:flex;align-items:center;gap:7px;font-size:12.5px;}
+.kpi .prev{color:#9aacbf;}
+.badge{font-weight:700;padding:2px 8px;border-radius:20px;font-size:11.5px;white-space:nowrap;}
+.badge.up{color:var(--up);background:rgba(31,191,117,.12);}
+.badge.dn{color:var(--down);background:rgba(229,72,77,.11);}
+.badge.fl{color:#8492a6;background:#edf1f7;}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px;}
+.grid1{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:16px;}
+.card{background:#fff;border-radius:14px;padding:22px 24px;border:1px solid #e2e8f2;box-shadow:0 1px 4px rgba(0,21,67,.05);}
+.card h3{font-size:15px;font-weight:800;color:var(--navy);margin-bottom:3px;}
+.card .hint{font-size:12px;color:#9aacbf;margin-bottom:16px;}
+.ch{position:relative;}
+.ch.h260{height:260px;}
+.ch.h220{height:220px;}
+.ch.h300{height:300px;}
+.ch.h200{height:200px;}
+
+/* Growth table */
+.gtable{width:100%;border-collapse:collapse;font-size:13px;}
+.gtable th{text-align:right;color:#8492a6;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:9px 10px;border-bottom:2px solid #edf1f7;}
+.gtable th:first-child{text-align:left;}
+.gtable td{padding:10px 10px;border-bottom:1px solid #f4f6fb;text-align:right;font-variant-numeric:tabular-nums;}
+.gtable td:first-child{text-align:left;font-weight:600;color:var(--navy);}
+.gtable tr:last-child td{border-bottom:none;}
+.gtable tr:hover td{background:#fafbfd;}
+.chg{font-size:11.5px;font-weight:700;padding:2px 7px;border-radius:12px;}
+.chg.u{color:var(--up);background:rgba(31,191,117,.1);}
+.chg.d{color:var(--down);background:rgba(229,72,77,.08);}
+.chg.n{color:#9aacbf;font-weight:400;}
+.val-cell{font-weight:500;color:#374151;}
+.na{color:#c8cfd8;font-style:italic;font-size:12px;}
+
+/* Insights */
+.insight{background:linear-gradient(130deg,#001543,#002880);color:#fff;border-radius:16px;padding:28px 32px;margin-top:16px;}
+.insight h3{color:var(--teal);font-size:12px;text-transform:uppercase;letter-spacing:2px;font-weight:700;margin-bottom:18px;}
+.insights-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.insight-item{background:rgba(255,255,255,.06);border:1px solid rgba(21,244,238,.15);border-radius:10px;padding:16px 18px;}
+.insight-item .itag{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:6px;}
+.insight-item p{font-size:13.5px;font-weight:300;color:#d4dff0;line-height:1.6;}
+.insight-item p b{color:#fff;font-weight:700;}
+
+.note{font-size:11.5px;color:#9aacbf;margin-top:8px;font-style:italic;}
+footer{margin-top:52px;text-align:center;color:#9aacbf;font-size:12px;border-top:1px solid #e2e8f2;padding-top:24px;}
+
+@media(max-width:1024px){.kpi-grid{grid-template-columns:repeat(2,1fr);}.grid2,.grid3{grid-template-columns:1fr;}.insights-grid{grid-template-columns:1fr;}.header-inner{flex-direction:column;align-items:flex-start;}}
+
+/* ── Content performance tables ── */
+.ptable{width:100%;border-collapse:collapse;font-size:12.5px;}
+.ptable th{text-align:left;color:#8492a6;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:8px 10px;border-bottom:2px solid #edf1f7;}
+.ptable th.r{text-align:right;}
+.ptable td{padding:9px 10px;border-bottom:1px solid #f4f6fb;vertical-align:middle;}
+.ptable td.r{text-align:right;font-variant-numeric:tabular-nums;color:#374151;font-weight:500;}
+.ptable td.dt{color:#9aacbf;font-size:11.5px;white-space:nowrap;}
+.ptable td.cn{font-weight:500;color:var(--navy);max-width:180px;}
+.ptable tr:last-child td{border-bottom:none;}
+.ptable tr:hover td{background:#fafbfd;}
+.no-data{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:150px;gap:8px;text-align:center;}
+.no-data .nd-icon{font-size:26px;opacity:.4;}
+.no-data .nd-t{font-size:13px;font-weight:600;color:#b0bec5;}
+.no-data .nd-s{font-size:11.5px;color:#c8d0da;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div>
+      <div class="eyebrow">Marketing &amp; Communications · Estithmar Holding Q.P.S.C.</div>
+      <h1>Digital Performance Dashboard</h1>
+      <p>Website analytics, Instagram &amp; LinkedIn · Jan–May 2026 · Estithmar Holding &amp; Al Maha Island</p>
+    </div>
+    <div class="month-pills">
+      <span class="mpill ytd-pill active" onclick="showTab('ytd')">Estithmar Holding</span>
+      <span class="mpill almaha-pill" onclick="showTab('almaha')">Al Maha Island</span>
+    </div>
+  </div>
+</header>
+
+<div id="view-ytd">
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION 1 — WEBSITE
+═══════════════════════════════════════════════════ -->
+<div class="section-header">
+  <span class="sec-num">01</span>
+  <span class="sec-title">Website Performance</span>
+  <span class="sec-sub">Google Analytics · estithmarholding.com · Jan–May 2026</span>
+</div>
+
+<div class="kpi-grid">
+  <div class="kpi">
+    <div class="lbl">Active Users · May</div>
+    <div class="val">15.0K</div>
+    <div class="sub"><span class="badge dn">▼ 6.3% vs Apr</span><span class="prev">Apr peak: 16K</span></div>
+  </div>
+  <div class="kpi">
+    <div class="lbl">Page Views · May</div>
+    <div class="val">35K</div>
+    <div class="sub"><span class="badge dn">▼ 5.4% vs Apr</span><span class="prev">Apr peak: 37K</span></div>
+  </div>
+  <div class="kpi">
+    <div class="lbl">Engagement Rate · May</div>
+    <div class="val">56.2%</div>
+    <div class="sub"><span class="badge up">▲ 5-month high</span><span class="prev">Mar low: 52.8%</span></div>
+  </div>
+  <div class="kpi">
+    <div class="lbl">Eng. Sessions / User · May</div>
+    <div class="val">0.74</div>
+    <div class="sub"><span class="badge up">▲ Tied Jan high</span><span class="prev">Apr low: 0.67</span></div>
+  </div>
+</div>
+
+<!-- Website growth table -->
+<div class="card" style="margin-bottom:16px">
+  <h3>Website Month-over-Month Growth</h3>
+  <div class="hint">Confirmed Google Analytics data · Apr gap = file not available</div>
+  <table class="gtable">
+    <thead>
+      <tr>
+        <th style="text-align:left">Metric</th>
+        <th>Jan</th><th>Feb</th><th>Feb MoM</th>
+        <th>Mar</th><th>Mar MoM</th>
+        <th>Apr</th><th>Apr MoM</th>
+        <th>May</th><th>May MoM</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Active Users</td>
+        <td class="val-cell">13.0K</td>
+        <td class="val-cell">12.0K</td><td><span class="chg d">▼ 7.7%</span></td>
+        <td class="val-cell">11.0K</td><td><span class="chg d">▼ 8.3%</span></td>
+        <td class="val-cell">16.0K</td><td><span class="chg u">▲ 45.5%</span></td>
+        <td class="val-cell">15.0K</td><td><span class="chg d">▼ 6.3%</span></td>
+      </tr>
+      <tr>
+        <td>New Users</td>
+        <td class="val-cell">12.0K</td>
+        <td class="val-cell">11.0K</td><td><span class="chg d">▼ 8.3%</span></td>
+        <td class="val-cell">9.8K</td><td><span class="chg d">▼ 10.9%</span></td>
+        <td class="val-cell">15.0K</td><td><span class="chg u">▲ 53.1%</span></td>
+        <td class="val-cell">15.0K</td><td><span class="chg fl">— flat</span></td>
+      </tr>
+      <tr>
+        <td>Page Views</td>
+        <td class="val-cell">37K</td>
+        <td class="val-cell">33K</td><td><span class="chg d">▼ 10.8%</span></td>
+        <td class="val-cell">29K</td><td><span class="chg d">▼ 12.1%</span></td>
+        <td class="val-cell">37K</td><td><span class="chg u">▲ 27.6%</span></td>
+        <td class="val-cell">35K</td><td><span class="chg d">▼ 5.4%</span></td>
+      </tr>
+      <tr>
+        <td>Engagement Rate</td>
+        <td class="val-cell">55.8%</td>
+        <td class="val-cell">53.5%</td><td><span class="chg d">▼ 2.3 pp</span></td>
+        <td class="val-cell">52.8%</td><td><span class="chg d">▼ 0.7 pp</span></td>
+        <td class="val-cell">53.2%</td><td><span class="chg u">▲ 0.4 pp</span></td>
+        <td class="val-cell">56.2%</td><td><span class="chg u">▲ 3.0 pp</span></td>
+      </tr>
+      <tr>
+        <td>Eng. Sessions / User</td>
+        <td class="val-cell">0.74</td>
+        <td class="val-cell">0.70</td><td><span class="chg d">▼ 5.4%</span></td>
+        <td class="val-cell">0.68</td><td><span class="chg d">▼ 2.9%</span></td>
+        <td class="val-cell">0.67</td><td><span class="chg d">▼ 1.5%</span></td>
+        <td class="val-cell">0.74</td><td><span class="chg u">▲ 10.4%</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="note">All 5 months sourced from Google Analytics. April GA export confirmed: 16K active users, 37K views, 53.2% engagement rate.</p>
+</div>
+
+<!-- Website trend charts -->
+<div class="grid2">
+  <div class="card">
+    <h3>Active Users — 5-Month Trend</h3>
+    <div class="hint">Jan–May 2026 · Google Analytics · all 5 months confirmed</div>
+    <div class="ch h260"><canvas id="gaUsersChart"></canvas></div>
+  </div>
+  <div class="card">
+    <h3>Page Views — 5-Month Trend</h3>
+    <div class="hint">Jan–May 2026 · Google Analytics · all 5 months confirmed</div>
+    <div class="ch h260"><canvas id="gaViewsChart"></canvas></div>
+  </div>
+</div>
+
+<div class="grid2">
+    <div class="hint">% of sessions that are "engaged" (30s+ or 2+ pageviews) · Google Analytics · all 5 months confirmed</div>
+    <div class="ch h260"><canvas id="gaEngChart"></canvas></div>
+  </div>
+  <div class="card">
+    <h3>Engagement Quality Metrics</h3>
+    <div class="hint">Avg engagement time per user (seconds) · Engaged sessions per user · Google Analytics · all 5 months confirmed</div>
+    <div class="ch h260"><canvas id="gaQualityChart"></canvas></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION 2 — INSTAGRAM
+═══════════════════════════════════════════════════ -->
+<div class="section-header">
+  <span class="sec-num">02</span>
+  <span class="sec-title">Instagram Performance</span>
+  <span class="sec-sub">estithmar.holding · Jan–May 2026 · all months confirmed</span>
+</div>
+
+<div class="kpi-grid">
+  <div class="kpi">
+    <div class="lbl">Followers · May</div>
+    <div class="val">12.18K</div>
+    <div class="sub"><span class="badge up">▲ +710 followers · +6.2%</span><span class="prev">Jan: 11,470 → May: 12,180</span></div>
+  </div>
+  <div class="kpi">
+    <div class="lbl">Monthly Views · May</div>
+    <div class="val">78.9K</div>
+    <div class="sub"><span class="badge dn">▼ 11.0% MoM</span><span class="prev">Apr: 88.7K</span></div>
+  </div>
+  <div class="kpi">
+    <div class="lbl">Avg Reach / Day · May</div>
+    <div class="val">612</div>
+    <div class="sub"><span class="badge dn">▼ 27.1% MoM</span><span class="prev">Apr: 839</span></div>
+  </div>
+  <div class="kpi">
+    <div class="lbl">Stories · May</div>
+    <div class="val">53</div>
+    <div class="sub"><span class="badge up">▲ 12.8% MoM</span><span class="prev">Apr: 47</span></div>
+  </div>
+</div>
+
+<!-- Instagram growth table -->
+<div class="card" style="margin-bottom:16px">
+  <h3>Instagram Month-over-Month Growth</h3>
+  <div class="hint">All 5 months · estithmar.holding</div>
+  <table class="gtable">
+    <thead>
+      <tr>
+        <th style="text-align:left">Metric</th>
+        <th>Jan</th>
+        <th>Feb</th><th>Feb MoM</th>
+        <th>Mar</th><th>Mar MoM</th>
+        <th>Apr</th><th>Apr MoM</th>
+        <th>May</th><th>May MoM</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Followers</td>
+        <td class="val-cell">11,470</td>
+        <td class="val-cell">11,750</td><td><span class="chg u">▲ 2.4%</span></td>
+        <td class="val-cell">11,830</td><td><span class="chg u">▲ 0.7%</span></td>
+        <td class="val-cell">12,020</td><td><span class="chg u">▲ 1.6%</span></td>
+        <td class="val-cell">12,180</td><td><span class="chg u">▲ 1.3%</span></td>
+      </tr>
+      <tr>
+        <td>Net New Followers</td>
+        <td class="na">—</td>
+        <td class="val-cell">+280</td><td><span class="chg n">Best month</span></td>
+        <td class="val-cell">+80</td><td><span class="chg d">▼ 71.4%</span></td>
+        <td class="val-cell">+190</td><td><span class="chg u">▲ 137.5%</span></td>
+        <td class="val-cell">+160</td><td><span class="chg d">▼ 15.8%</span></td>
+      </tr>
+      <tr>
+        <td>Views</td>
+        <td class="val-cell">60.9K</td>
+        <td class="val-cell">187.9K</td><td><span class="chg u">▲ 209%</span></td>
+        <td class="val-cell">33.3K</td><td><span class="chg d">▼ 82.3%</span></td>
+        <td class="val-cell">88.7K</td><td><span class="chg u">▲ 167%</span></td>
+        <td class="val-cell">78.9K</td><td><span class="chg d">▼ 11.0%</span></td>
+      </tr>
+      <tr>
+        <td>Avg Reach / Day</td>
+        <td class="val-cell">735</td>
+        <td class="val-cell">2,542</td><td><span class="chg u">▲ 246%</span></td>
+        <td class="val-cell">365</td><td><span class="chg d">▼ 85.6%</span></td>
+        <td class="val-cell">839</td><td><span class="chg u">▲ 130%</span></td>
+        <td class="val-cell">612</td><td><span class="chg d">▼ 27.1%</span></td>
+      </tr>
+      <tr>
+        <td>Posts</td>
+        <td class="val-cell">2</td>
+        <td class="val-cell">3</td><td><span class="chg u">▲ 50%</span></td>
+        <td class="val-cell">1</td><td><span class="chg d">▼ 66.7%</span></td>
+        <td class="val-cell">7</td><td><span class="chg u">▲ 600%</span></td>
+        <td class="val-cell">1</td><td><span class="chg d">▼ 85.7%</span></td>
+      </tr>
+      <tr>
+        <td>Stories</td>
+        <td class="val-cell">28</td>
+        <td class="val-cell">56</td><td><span class="chg u">▲ 100%</span></td>
+        <td class="val-cell">34</td><td><span class="chg d">▼ 39.3%</span></td>
+        <td class="val-cell">47</td><td><span class="chg u">▲ 38.2%</span></td>
+        <td class="val-cell">53</td><td><span class="chg u">▲ 12.8%</span></td>
+      </tr>
+      <tr>
+        <td>Reels</td>
+        <td class="val-cell">1</td>
+        <td class="val-cell">1</td><td><span class="chg fl">— flat</span></td>
+        <td class="val-cell">2</td><td><span class="chg u">▲ 100%</span></td>
+        <td class="val-cell">2</td><td><span class="chg fl">— flat</span></td>
+        <td class="val-cell">0</td><td><span class="chg d">▼ 100%</span></td>
+      </tr>
+      <tr>
+        <td>Total Content</td>
+        <td class="val-cell">31</td>
+        <td class="val-cell">60</td><td><span class="chg u">▲ 93.5%</span></td>
+        <td class="val-cell">37</td><td><span class="chg d">▼ 38.3%</span></td>
+        <td class="val-cell">56</td><td><span class="chg u">▲ 51.4%</span></td>
+        <td class="val-cell">54</td><td><span class="chg d">▼ 3.6%</span></td>
+      </tr>
+      <tr>
+        <td>Interactions</td>
+        <td class="val-cell">133</td>
+        <td class="val-cell">722</td><td><span class="chg u">▲ 443%</span></td>
+        <td class="val-cell">64</td><td><span class="chg d">▼ 91.1%</span></td>
+        <td class="val-cell">494</td><td><span class="chg u">▲ 672%</span></td>
+        <td class="val-cell">242</td><td><span class="chg d">▼ 51.0%</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Followers + Views trend -->
+<div class="grid2">
+  <div class="card">
+    <h3>Followers Growth Trend</h3>
+    <div class="hint">estithmar.holding · consistent month-on-month gains</div>
+    <div class="ch h260"><canvas id="igFollowersChart"></canvas></div>
+  </div>
+  <div class="card">
+    <h3>Monthly Views (Impressions)</h3>
+    <div class="hint">Highly event-driven — spikes align with major announcements</div>
+    <div class="ch h260"><canvas id="igViewsChart"></canvas></div>
+  </div>
+</div>
+
+<!-- Content volume + Interactions -->
+<div class="grid2">
+  <div class="card">
+    <h3>Content Volume — Posts / Stories / Reels</h3>
+    <div class="hint">Monthly output breakdown by content type</div>
+    <div class="ch h260"><canvas id="igContentChart"></canvas></div>
+  </div>
+  <div class="card">
+    <h3>Interactions (Likes + Comments + Shares + Saved)</h3>
+    <div class="hint">Total post interactions · peaks follow news cycles</div>
+    <div class="ch h260"><canvas id="igInteractChart"></canvas></div>
+  </div>
+</div>
+
+<!-- Avg reach per day line -->
+<div class="grid1">
+  <div class="card">
+    <h3>Average Daily Reach — Month-by-Month</h3>
+    <div class="hint">How many unique accounts are reached per day on average · Feb spike = Estithmar Capital launch + Elegancia MEP viral post</div>
+    <div class="ch h220"><canvas id="igReachChart"></canvas></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION 3 — LINKEDIN
+═══════════════════════════════════════════════════ -->
+<div class="section-header">
+  <span class="sec-num">03</span>
+  <span class="sec-title">LinkedIn Performance</span>
+  <span class="sec-sub">Company page followers · Jan–May 2026 · YTD growth</span>
+</div>
+
+<div class="kpi-grid">
+  <div class="kpi">
+    <div class="lbl">Followers · May</div>
+    <div class="val">105.3K</div>
+    <div class="sub"><span class="badge up">▲ +9,161 YTD · +9.5%</span><span class="prev">Jan: 96.2K → May: 105.3K</span></div>
+  </div>
+  <div class="kpi">
+    <div class="lbl">Best Month</div>
+    <div class="val">April</div>
+    <div class="sub"><span class="badge up">▲ +3,109 followers</span><span class="prev">47% above Jan baseline</span></div>
+  </div>
+  <div class="kpi">
+    <div class="lbl">Avg Monthly Growth</div>
+    <div class="val">+1,832</div>
+    <div class="sub"><span class="badge up">▲ Consistent gains</span><span class="prev">All months positive</span></div>
+  </div>
+  <div class="kpi">
+    <div class="lbl">Growth Momentum</div>
+    <div class="val">May</div>
+    <div class="sub"><span class="badge up">▲ +2,815 followers</span><span class="prev">Strong end-of-period</span></div>
+  </div>
+</div>
+
+<!-- LinkedIn follower growth -->
+<div class="card" style="margin-bottom:16px">
+  <h3>LinkedIn Company Page — Monthly New Followers · YTD Growth</h3>
+  <div class="hint">New followers per month · Jan–May 2026 · cumulative progression</div>
+  <table class="gtable">
+    <thead>
+      <tr>
+        <th style="text-align:left">Month</th>
+        <th>New Followers</th>
+        <th>MoM Change</th>
+        <th>Cumulative Followers</th>
+        <th>YTD Growth %</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>January</td>
+        <td class="val-cell">1,668</td>
+        <td><span class="chg n">—</span></td>
+        <td class="val-cell">96,167</td>
+        <td><span class="badge fl">—</span></td>
+      </tr>
+      <tr>
+        <td>February</td>
+        <td class="val-cell">1,950</td>
+        <td><span class="chg u">▲ 16.9%</span></td>
+        <td class="val-cell">98,117</td>
+        <td><span class="badge up">+1.9%</span></td>
+      </tr>
+      <tr>
+        <td>March</td>
+        <td class="val-cell">1,321</td>
+        <td><span class="chg d">▼ 32.2%</span></td>
+        <td class="val-cell">99,438</td>
+        <td><span class="badge up">+3.4%</span></td>
+      </tr>
+      <tr>
+        <td>April</td>
+        <td class="val-cell">3,109</td>
+        <td><span class="chg u">▲ 135.4%</span></td>
+        <td class="val-cell">102,547</td>
+        <td><span class="badge up">+6.6%</span></td>
+      </tr>
+      <tr>
+        <td>May</td>
+        <td class="val-cell">2,815</td>
+        <td><span class="chg d">▼ 9.4%</span></td>
+        <td class="val-cell">105,362</td>
+        <td><span class="badge up">+9.5%</span></td>
+      </tr>
+      <tr style="font-weight:700;background:#f0f3f8;">
+        <td>YTD Total</td>
+        <td class="val-cell">10,863</td>
+        <td><span class="chg u">▲ All positive</span></td>
+        <td class="val-cell">105,362</td>
+        <td><span class="badge up">+11.3%</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="note">New followers represent organic + sponsored additions per month. January baseline: 96,167 followers. April spike (+3,109) likely tied to major announcements or campaign push. May sustained strong growth (+2,815) despite slight MoM dip. Cumulative YTD growth: +9,161 followers over 5 months.</p>
+</div>
+
+<!-- LinkedIn growth trend -->
+<div class="grid2">
+  <div class="card">
+    <h3>Monthly New Followers — YTD Trend</h3>
+    <div class="hint">Jan–May 2026 · monthly acquisition · 5-month average: 1,832/month</div>
+    <div class="ch h260"><canvas id="linkedinNewChart"></canvas></div>
+  </div>
+  <div class="card">
+    <h3>Cumulative Followers — Growth Trajectory</h3>
+    <div class="hint">End-of-month snapshots · Jan 96.2K → May 105.3K · 9.5% YTD growth</div>
+    <div class="ch h260"><canvas id="linkedinCumulativeChart"></canvas></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION 4 — INSIGHTS
+═══════════════════════════════════════════════════ -->
+<div class="section-header">
+  <span class="sec-num">04</span>
+  <span class="sec-title">Key Takeaways</span>
+</div>
+
+<div class="insight">
+  <h3>Reading the 5-Month Pattern</h3>
+  <div class="insights-grid">
+    <div class="insight-item">
+      <div class="itag">Website Trajectory</div>
+      <p>Traffic declined Jan→Mar (13K→11K active users), then <b>surged in April to a 5-month peak of 16K</b> driven by Q1 results, bonus share announcements, and the Shahba Bank deal. May settled slightly to 15K while <b>engagement rate hit its 5-month high of 56.2%</b> — more qualified traffic, not just volume.</p>
+    </div>
+    <div class="insight-item">
+      <div class="itag">Instagram Followers</div>
+      <p>Followers grew every single month without exception: <b>11,470 → 12,180 (+6.2% over 5 months)</b>. This baseline growth is independent of content volume — even low-post months like March and May still gained ~80–160 new followers.</p>
+    </div>
+    <div class="insight-item">
+      <div class="itag">LinkedIn B2B Power</div>
+      <p><b>105.3K company followers by May</b> — <b>8.6x the size of Instagram audience</b>. YTD growth of +10,863 followers (+11.3%) with all 5 months positive. April spike (+3,109) signals successful awareness campaign; May sustained at +2,815. LinkedIn is the dominant B2B channel for recruitment, investor relations, and stakeholder engagement.</p>
+    </div>
+    <div class="insight-item">
+      <div class="itag">Views Are Event-Driven</div>
+      <p>Monthly views swung wildly: 60.9K → <b>187.9K (Feb, Estithmar Capital launch)</b> → 33.3K → 88.7K → 78.9K. The pattern shows <b>two distinct spikes tied to major corporate announcements</b>; baseline (non-announcement months) sits around 33–60K.</p>
+    </div>
+    <div class="insight-item">
+      <div class="itag">Stories Are the Backbone</div>
+      <p>Stories have been the <b>most consistent content type</b>, running 28–56/month across the period. Posts and reels are sporadic (0–7/month). In May, 53 stories were published vs. just 1 post — Stories carry the daily presence.</p>
+    </div>
+    <div class="insight-item">
+      <div class="itag">Content Volume ≠ Reach</div>
+      <p>February had 60 pieces of content and 187.9K views. March had 37 pieces and only 33.3K views. <b>Content quality and announcement timing matter far more than posting frequency.</b> The single Elegancia FM post in May drove 11.2K impressions alone.</p>
+    </div>
+    <div class="insight-item">
+      <div class="itag">Organic Search is Rising</div>
+      <p>Google organic overtook direct traffic in May (7.9K vs 6.4K sessions). Across the 5 months, <b>Doha, Qatar remains the primary audience city</b>, with consistent secondary markets in Riyadh, Ashburn, and Dubai — useful for campaign targeting.</p>
+    </div>
+  </div>
+</div>
+
+</div><!-- /view-ytd -->
+
+<footer>
+  Prepared by Marketing &amp; Communications · Estithmar Holding Q.P.S.C.<br>
+  Sources: Google Analytics (Jan–May 2026) · Instagram Insights (Jan–May 2026, Metricool) · LinkedIn Company Page (Jan–May 2026) · Generated 10 June 2026 · Internal use
+</footer>
+
+<!-- ══════════════════════════════════════════════════════════
+     AL MAHA ISLAND TAB
+══════════════════════════════════════════════════════════ -->
+<div id="view-almaha" style="display:none">
+
+<!-- ═══════════════ AL MAHA HEADER ═══════════════ -->
+<div class="section-header" style="margin-top:0px;margin-bottom:32px">
+  <span class="sec-num" style="font-size:28px;color:rgba(21,244,238,.35)">◈</span>
+  <span class="sec-title">Al Maha Island</span>
+  <span class="sec-sub">almahaisland.com · @almaha.island · Jan–May 2026</span>
+</div>
+<p style="font-size:13px;color:#8492a6;margin:-20px 0 32px 0;padding-left:0;">Subsidiary performance — standalone view · Metricool source data</p>
+
+<!-- ═══════════════ SECTION 1 — WEBSITE ═══════════════ -->
+<div class="section-header">
+  <span class="sec-num">01</span>
+  <span class="sec-title">Website Performance</span>
+  <span class="sec-sub">almahaisland.com · Jan–May 2026</span>
+</div>
+
+<div class="kpi-grid">
+  <div class="kpi">
+    <div class="lbl">Views · May</div>
+    <div class="val">7,193</div>
+    <div class="sub"><span class="badge up">▲ +26.2% MoM</span><span class="prev">Apr: 5,701</span></div>
+  </div>
+  <div class="kpi">
+    <div class="lbl">Visits · May</div>
+    <div class="val">3,627</div>
+    <div class="sub"><span class="badge up">▲ +14.7% MoM</span><span class="prev">Apr: 3,162</span></div>
+  </div>
+  <div class="kpi">
+    <div class="lbl">Visitors · May</div>
+    <div class="val">2,612</div>
+    <div class="sub"><span class="badge up">▲ +19.3% MoM</span><span class="prev">Apr: 2,190</span></div>
+  </div>
+  <div class="kpi">
+    <div class="lbl">YTD Peak Month</div>
+    <div class="val">January</div>
+    <div class="sub"><span class="badge up">▲ 17.5K views</span><span class="prev">Mar low: 4,794</span></div>
+  </div>
+</div>
+
+<div class="card" style="margin-bottom:16px">
+  <h3>Website Month-over-Month Growth</h3>
+  <div class="hint">almahaisland.com · all 5 months · Metricool</div>
+  <table class="gtable">
+    <thead>
+      <tr>
+        <th style="text-align:left">Metric</th>
+        <th>Jan</th>
+        <th>Feb</th><th>Feb MoM</th>
+        <th>Mar</th><th>Mar MoM</th>
+        <th>Apr</th><th>Apr MoM</th>
+        <th>May</th><th>May MoM</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Views</td>
+        <td class="val-cell">17,500</td>
+        <td class="val-cell">12,100</td><td><span class="chg d">▼ 30.9%</span></td>
+        <td class="val-cell">4,794</td><td><span class="chg d">▼ 60.4%</span></td>
+        <td class="val-cell">5,701</td><td><span class="chg u">▲ 18.9%</span></td>
+        <td class="val-cell">7,193</td><td><span class="chg u">▲ 26.2%</span></td>
+      </tr>
+      <tr>
+        <td>Visits</td>
+        <td class="val-cell">8,297</td>
+        <td class="val-cell">5,512</td><td><span class="chg d">▼ 33.6%</span></td>
+        <td class="val-cell">2,871</td><td><span class="chg d">▼ 47.9%</span></td>
+        <td class="val-cell">3,162</td><td><span class="chg u">▲ 10.1%</span></td>
+        <td class="val-cell">3,627</td><td><span class="chg u">▲ 14.7%</span></td>
+      </tr>
+      <tr>
+        <td>Visitors</td>
+        <td class="val-cell">5,701</td>
+        <td class="val-cell">4,197</td><td><span class="chg d">▼ 26.4%</span></td>
+        <td class="val-cell">2,098</td><td><span class="chg d">▼ 50.0%</span></td>
+        <td class="val-cell">2,190</td><td><span class="chg u">▲ 4.4%</span></td>
+        <td class="val-cell">2,612</td><td><span class="chg u">▲ 19.3%</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="note">Traffic decline Jan→Mar aligns with seasonal post-winter drop. Recovery from Apr onwards with May recovering to 41% of Jan peak. Top traffic source: Qatar (61–69% of visitors). Top page: /destinations/carbone drives ~7–9% of views.</p>
+</div>
+
+<div class="grid2">
+  <div class="card">
+    <h3>Website Views — 5-Month Trend</h3>
+    <div class="hint">almahaisland.com · Jan–May 2026 · seasonal decline then recovery</div>
+    <div class="ch h260"><canvas id="amWebViewsChart"></canvas></div>
+  </div>
+  <div class="card">
+    <h3>Visits & Visitors — 5-Month Trend</h3>
+    <div class="hint">Session volume and unique visitors · recovery underway from April</div>
+    <div class="ch h260"><canvas id="amWebVisitsChart"></canvas></div>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 2 — INSTAGRAM ═══════════════ -->
+<div class="section-header">
+  <span class="sec-num">02</span>
+  <span class="sec-title">Instagram Performance</span>
+  <span class="sec-sub">@almaha.island · Jan–May 2026</span>
+</div>
+
+<div class="kpi-grid">
+  <div class="kpi">
+    <div class="lbl">Followers · May</div>
+    <div class="val">59.2K</div>
+    <div class="sub"><span class="badge fl">— Flat YTD (+40)</span><span class="prev">Jan: 59.16K → May: 59.2K</span></div>
+  </div>
+  <div class="kpi">
+    <div class="lbl">IG Views · May</div>
+    <div class="val">146.6K</div>
+    <div class="sub"><span class="badge up">▲ +110% MoM</span><span class="prev">Apr: 69.8K</span></div>
+  </div>
+  <div class="kpi">
+    <div class="lbl">Avg Reach/Day · May</div>
+    <div class="val">1,824</div>
+    <div class="sub"><span class="badge up">▲ +282% MoM</span><span class="prev">Apr low: 478</span></div>
+  </div>
+  <div class="kpi">
+    <div class="lbl">Top Post · May</div>
+    <div class="val">52.3K</div>
+    <div class="sub"><span class="badge up">▲ Views · GCC campaign</span><span class="prev">27.4K reach · Dammam post</span></div>
+  </div>
+</div>
+
+<div class="card" style="margin-bottom:16px">
+  <h3>Instagram Month-over-Month Growth</h3>
+  <div class="hint">@almaha.island · all 5 months · Metricool</div>
+  <table class="gtable">
+    <thead>
+      <tr>
+        <th style="text-align:left">Metric</th>
+        <th>Jan</th>
+        <th>Feb</th><th>Feb MoM</th>
+        <th>Mar</th><th>Mar MoM</th>
+        <th>Apr</th><th>Apr MoM</th>
+        <th>May</th><th>May MoM</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Followers</td>
+        <td class="val-cell">59,160</td>
+        <td class="val-cell">59,330</td><td><span class="chg u">▲ +0.3%</span></td>
+        <td class="val-cell">59,480</td><td><span class="chg u">▲ +0.3%</span></td>
+        <td class="val-cell">59,360</td><td><span class="chg d">▼ −0.2%</span></td>
+        <td class="val-cell">59,200</td><td><span class="chg d">▼ −0.3%</span></td>
+      </tr>
+      <tr>
+        <td>Follower Balance</td>
+        <td class="val-cell">+224</td>
+        <td class="val-cell">+174</td><td><span class="chg d">▼ 22.3%</span></td>
+        <td class="val-cell">+144</td><td><span class="chg d">▼ 17.2%</span></td>
+        <td class="val-cell">−122</td><td><span class="chg d">▼ Net loss</span></td>
+        <td class="val-cell">−152</td><td><span class="chg d">▼ Net loss</span></td>
+      </tr>
+      <tr>
+        <td>IG Views</td>
+        <td class="val-cell">277,540</td>
+        <td class="val-cell">128,520</td><td><span class="chg d">▼ 53.7%</span></td>
+        <td class="val-cell">103,510</td><td><span class="chg d">▼ 19.5%</span></td>
+        <td class="val-cell">69,820</td><td><span class="chg d">▼ 32.5%</span></td>
+        <td class="val-cell">146,640</td><td><span class="chg u">▲ 110.0%</span></td>
+      </tr>
+      <tr>
+        <td>Avg Reach/Day</td>
+        <td class="val-cell">2,306</td>
+        <td class="val-cell">1,102</td><td><span class="chg d">▼ 52.2%</span></td>
+        <td class="val-cell">787</td><td><span class="chg d">▼ 28.6%</span></td>
+        <td class="val-cell">478</td><td><span class="chg d">▼ 39.3%</span></td>
+        <td class="val-cell">1,824</td><td><span class="chg u">▲ 281.6%</span></td>
+      </tr>
+      <tr>
+        <td>Stories</td>
+        <td class="val-cell">289</td>
+        <td class="val-cell">167</td><td><span class="chg d">▼ 42.2%</span></td>
+        <td class="val-cell">75</td><td><span class="chg d">▼ 55.1%</span></td>
+        <td class="val-cell">180</td><td><span class="chg u">▲ 140.0%</span></td>
+        <td class="val-cell">90</td><td><span class="chg d">▼ 50.0%</span></td>
+      </tr>
+      <tr>
+        <td>Posts</td>
+        <td class="val-cell">0</td>
+        <td class="val-cell">0</td><td><span class="chg fl">—</span></td>
+        <td class="val-cell">1</td><td><span class="chg u">▲ First post</span></td>
+        <td class="val-cell">0</td><td><span class="chg d">▼ 100%</span></td>
+        <td class="val-cell">8</td><td><span class="chg u">▲ Breakout</span></td>
+      </tr>
+      <tr>
+        <td>Reels</td>
+        <td class="val-cell">0</td>
+        <td class="val-cell">3</td><td><span class="chg u">▲ First reels</span></td>
+        <td class="val-cell">2</td><td><span class="chg d">▼ 33.3%</span></td>
+        <td class="val-cell">0</td><td><span class="chg d">▼ 100%</span></td>
+        <td class="val-cell">5</td><td><span class="chg u">▲ Strong return</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="grid2">
+  <div class="card">
+    <h3>IG Views — 5-Month Trend</h3>
+    <div class="hint">Jan peak 277.5K → decline → strong May recovery at 146.6K (+110%)</div>
+    <div class="ch h260"><canvas id="amIgViewsChart"></canvas></div>
+  </div>
+  <div class="card">
+    <h3>Average Reach per Day</h3>
+    <div class="hint">Jan 2,306 → Apr low 478 → May bounce to 1,824 (+282%)</div>
+    <div class="ch h260"><canvas id="amIgReachChart"></canvas></div>
+  </div>
+</div>
+
+<div class="grid2">
+  <div class="card">
+    <h3>Content Volume — Stories / Posts / Reels</h3>
+    <div class="hint">Story-led account · May breakout with 8 posts + 5 reels driving reach spike</div>
+    <div class="ch h260"><canvas id="amIgContentChart"></canvas></div>
+  </div>
+  <div class="card">
+    <h3>Follower Balance — Monthly Net Change</h3>
+    <div class="hint">Net followers gained/lost per month · Apr–May turned negative (seasonal unfollows)</div>
+    <div class="ch h260"><canvas id="amIgFollBalance"></canvas></div>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 3 — INSIGHTS ═══════════════ -->
+<div class="section-header">
+  <span class="sec-num">03</span>
+  <span class="sec-title">Key Takeaways</span>
+</div>
+
+<div class="insight">
+  <h3>Al Maha Island · 5-Month Pattern</h3>
+  <div class="insights-grid">
+    <div class="insight-item">
+      <div class="itag">Website — Seasonal Dip then Recovery</div>
+      <p>Views dropped sharply Jan→Mar (17.5K→4.8K) as winter season ended. From April, consistent month-on-month recovery: <b>+18.9% Apr, +26.2% May</b>. Qatar remains the dominant audience at 61–69% of all visitors; top destination page is /carbone at 7–9% of views.</p>
+    </div>
+    <div class="insight-item">
+      <div class="itag">Instagram — May Breakout</div>
+      <p>After 4 months of declining views and reach, <b>May reversed sharply: +110% IG views, +282% avg reach/day</b>. Driven by an 8-post GCC geo-targeting campaign (Dammam, Muscat, Khobar, Riyadh, Abu Dhabi) with the Dammam post alone hitting <b>52.3K views and 27.4K reach</b>.</p>
+    </div>
+    <div class="insight-item">
+      <div class="itag">Follower Base Stable but Eroding</div>
+      <p>59.1K→59.2K across 5 months — virtually flat. Jan–Mar showed small gains (+224, +174, +144). Apr–May flipped negative (−122, −152). <b>Net YTD: +40 followers</b>. Off-season unfollows are offsetting new gains; follower growth strategy needed for summer.</p>
+    </div>
+    <div class="insight-item">
+      <div class="itag">GCC Geo-Campaign is the Playbook</div>
+      <p>May's content strategy — <b>city-specific "welcome" posts for GCC audiences</b> (Dammam, Muscat, Khobar, Riyadh, Abu Dhabi) — generated the highest reach in 5 months. Avg reach per post hit <b>5,440</b> vs a prior baseline near zero. This format should be systematically replicated.</p>
+    </div>
+    <div class="insight-item">
+      <div class="itag">Stories Are Volume, Posts Are Reach</div>
+      <p>January ran 289 stories but 0 posts, producing high volume but limited reach per piece (avg ~197). May ran just 90 stories but 8 posts and 5 reels — generating <b>5.9× higher avg reach per post</b>. Shift from story-only to post+reel strategy is paying off.</p>
+    </div>
+    <div class="insight-item">
+      <div class="itag">Content Gap: Mar & Apr</div>
+      <p>March had only 1 post, April had 0. These months coincided with the lowest reach and views of the period. The correlation is direct: <b>zero posts = invisible on the feed</b>. A minimum 4-post cadence even in off-season would protect baseline reach.</p>
+    </div>
+  </div>
+</div>
+
+</div><!-- /view-almaha -->
+
+
+
+</div><!-- /wrap -->
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+const NAVY='#001543', BLUE='#0071CE', TEAL='#15F4EE', IG='#E1306C';
+const UP='#1FBF75', DN='#E5484D';
+Chart.defaults.font.family="'Tajawal',sans-serif";
+Chart.defaults.font.size=12.5;
+Chart.defaults.color='#6b7280';
+
+const months=['Jan','Feb','Mar','Apr','May'];
+const fmtK=v=>v==null?'':v>=1000?(v/1000).toFixed(v%1000?1:0)+'K':v;
+
+function lineOpts(yFmt){return{responsive:true,maintainAspectRatio:false,spanGaps:false,
+  plugins:{legend:{position:'top',labels:{boxWidth:10,usePointStyle:true,padding:12}}},
+  scales:{y:{ticks:{callback:yFmt||fmtK},grid:{color:'#f0f3f8'},border:{dash:[4,4]}},
+          x:{grid:{display:false}}}
+};}
+
+function barOpts(yFmt,stacked){return{responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{position:'top',labels:{boxWidth:10,usePointStyle:true,padding:12}}},
+  scales:{y:{stacked:stacked||false,ticks:{callback:yFmt||fmtK},grid:{color:'#f0f3f8'},border:{dash:[4,4]}},
+          x:{stacked:stacked||false,grid:{display:false}}}
+};}
+
+/* ── GA: Active Users ── */
+new Chart(document.getElementById('gaUsersChart'),{type:'line',data:{
+  labels:months,
+  datasets:[{
+    label:'Active Users',
+    data:[13000,12000,11000,16000,15000],
+    borderColor:BLUE,backgroundColor:'rgba(0,113,206,.08)',
+    fill:true,tension:.4,pointRadius:5,pointHoverRadius:7,
+    pointBackgroundColor:[BLUE,BLUE,BLUE,BLUE,TEAL]
+  }]
+},options:lineOpts()});
+
+/* ── GA: Views ── */
+new Chart(document.getElementById('gaViewsChart'),{type:'line',data:{
+  labels:months,
+  datasets:[{
+    label:'Page Views',
+    data:[37000,33000,29000,37000,35000],
+    borderColor:'#6366F1',backgroundColor:'rgba(99,102,241,.07)',
+    fill:true,tension:.4,pointRadius:5,pointHoverRadius:7,
+    pointBackgroundColor:['#6366F1','#6366F1','#6366F1','#6366F1',TEAL]
+  }]
+},options:lineOpts()});
+
+/* ── GA: Engagement Rate ── */
+new Chart(document.getElementById('gaEngChart'),{type:'bar',data:{
+  labels:months,
+  datasets:[{
+    label:'Engagement Rate %',
+    data:[55.8,53.5,52.8,53.2,56.2],
+    backgroundColor:[
+      'rgba(0,113,206,.55)','rgba(0,113,206,.55)','rgba(0,113,206,.55)',
+      'rgba(0,113,206,.55)','rgba(21,244,238,.7)'
+    ],
+    borderRadius:6,
+    borderSkipped:false
+  }]
+},options:{...barOpts(v=>v==null?'':v+'%'),plugins:{legend:{display:false}},
+  scales:{y:{min:50,max:60,ticks:{callback:v=>v+'%'},grid:{color:'#f0f3f8'},border:{dash:[4,4]}},x:{grid:{display:false}}}}});
+
+/* ── GA: Quality ── */
+new Chart(document.getElementById('gaQualityChart'),{type:'line',data:{
+  labels:months,
+  datasets:[
+    {label:'Avg Eng Time / User (sec)',data:[68,68,81,49,50],
+     borderColor:BLUE,backgroundColor:'transparent',
+     tension:.4,pointRadius:5,yAxisID:'y',
+     pointBackgroundColor:[BLUE,BLUE,BLUE,BLUE,TEAL]},
+    {label:'Eng Sessions / User',data:[0.74,0.70,0.68,0.67,0.74],
+     borderColor:UP,backgroundColor:'transparent',
+     tension:.4,pointRadius:5,yAxisID:'y2',
+     pointBackgroundColor:[UP,UP,UP,UP,TEAL]}
+  ]
+},options:{responsive:true,maintainAspectRatio:false,spanGaps:false,
+  plugins:{legend:{position:'top',labels:{boxWidth:10,usePointStyle:true,padding:12}}},
+  scales:{
+    y:{position:'left',ticks:{callback:v=>v+'s'},grid:{color:'#f0f3f8'},border:{dash:[4,4]}},
+    y2:{position:'right',min:0.5,max:0.9,ticks:{callback:v=>v.toFixed(2)},grid:{drawOnChartArea:false}},
+    x:{grid:{display:false}}
+  }}});
+
+/* ── IG: Followers ── */
+new Chart(document.getElementById('igFollowersChart'),{type:'line',data:{
+  labels:months,
+  datasets:[{
+    label:'Followers',
+    data:[11470,11750,11830,12020,12180],
+    borderColor:IG,backgroundColor:'rgba(225,48,108,.08)',
+    fill:true,tension:.4,pointRadius:5,pointHoverRadius:7,
+    pointBackgroundColor:[IG,IG,IG,IG,TEAL]
+  }]
+},options:{...lineOpts(),scales:{y:{min:11000,max:12500,ticks:{callback:fmtK},grid:{color:'#f0f3f8'},border:{dash:[4,4]}},x:{grid:{display:false}}}}});
+
+/* ── IG: Views ── */
+new Chart(document.getElementById('igViewsChart'),{type:'bar',data:{
+  labels:months,
+  datasets:[{
+    label:'Monthly Views',
+    data:[60860,187920,33250,88700,78900],
+    backgroundColor:[
+      'rgba(225,48,108,.5)','rgba(225,48,108,.9)',
+      'rgba(225,48,108,.35)','rgba(225,48,108,.75)',
+      'rgba(225,48,108,.65)'
+    ],
+    borderRadius:6
+  }]
+},options:{...barOpts(),plugins:{legend:{display:false}}}});
+
+/* ── IG: Content volume ── */
+new Chart(document.getElementById('igContentChart'),{type:'bar',data:{
+  labels:months,
+  datasets:[
+    {label:'Stories',data:[28,56,34,47,53],backgroundColor:'rgba(225,48,108,.75)',borderRadius:4},
+    {label:'Posts',data:[2,3,1,7,1],backgroundColor:BLUE,borderRadius:4},
+    {label:'Reels',data:[1,1,2,2,0],backgroundColor:TEAL,borderRadius:4}
+  ]
+},options:barOpts(null,true)});
+
+/* ── IG: Interactions ── */
+new Chart(document.getElementById('igInteractChart'),{type:'bar',data:{
+  labels:months,
+  datasets:[{
+    label:'Total Interactions',
+    data:[133,722,64,494,242],
+    backgroundColor:[
+      'rgba(99,102,241,.6)','rgba(99,102,241,.95)',
+      'rgba(99,102,241,.35)','rgba(99,102,241,.85)',
+      'rgba(99,102,241,.65)'
+    ],
+    borderRadius:6
+  }]
+},options:{...barOpts(),plugins:{legend:{display:false}}}});
+
+/* ── IG: Avg Reach/Day ── */
+new Chart(document.getElementById('igReachChart'),{type:'line',data:{
+  labels:months,
+  datasets:[{
+    label:'Avg Reach / Day',
+    data:[735,2542,365,839,612],
+    borderColor:'#F59E0B',backgroundColor:'rgba(245,158,11,.08)',
+    fill:true,tension:.4,pointRadius:6,pointHoverRadius:8,
+    pointBackgroundColor:['#F59E0B','#F59E0B','#F59E0B','#F59E0B','#F59E0B']
+  }]
+},options:lineOpts()});
+
+/* ── LINKEDIN: New Followers per Month ── */
+new Chart(document.getElementById('linkedinNewChart'),{type:'bar',data:{
+  labels:['January','February','March','April','May'],
+  datasets:[{
+    label:'New Followers per Month',
+    data:[1668,1950,1321,3109,2815],
+    backgroundColor:['#0071CE','#0071CE','#0071CE','#15F4EE','#0071CE'],
+    borderRadius:6,
+    borderSkipped:false
+  }]
+},options:barOpts()});
+
+/* ── LINKEDIN: Cumulative Followers ── */
+new Chart(document.getElementById('linkedinCumulativeChart'),{type:'line',data:{
+  labels:['January','February','March','April','May'],
+  datasets:[{
+    label:'Total Company Followers',
+    data:[96167,98117,99438,102547,105362],
+    borderColor:'#0071CE',backgroundColor:'rgba(0,113,206,.08)',
+    fill:true,tension:.4,pointRadius:6,pointHoverRadius:8,
+    pointBackgroundColor:['#0071CE','#0071CE','#0071CE','#0071CE','#0071CE']
+  }]
+},options:lineOpts()});
+
+// ════════════════════════════════════════════════════════════════
+//  TAB SYSTEM
+// ════════════════════════════════════════════════════════════════
+const _tabInited = {};
+
+function showTab(tab){
+  document.querySelectorAll('.mpill').forEach(p=>{
+    const oc = p.getAttribute('onclick')||'';
+    p.classList.toggle('active', oc.includes("'"+tab+"'"));
+  });
+  const ytd = document.getElementById('view-ytd');
+  if(ytd) ytd.style.display = tab==='ytd' ? '' : 'none';
+  const am = document.getElementById('view-almaha');
+  if(am) am.style.display = tab==='almaha' ? '' : 'none';
+
+  if(tab==='almaha' && !_tabInited['almaha']){
+    _initAlMahaCharts();
+    _tabInited['almaha']=true;
+  }
+}
+
+function _initAlMahaCharts(){
+  const months = ['Jan','Feb','Mar','Apr','May'];
+  const lineO = ()=>({
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'top',labels:{boxWidth:9,usePointStyle:true,padding:10,font:{size:11}}}},
+    scales:{
+      y:{ticks:{callback:v=>v>=1000?(v/1000).toFixed(1)+'K':v,font:{size:11}},grid:{color:'#f0f3f8'},border:{dash:[4,4]}},
+      x:{grid:{display:false},ticks:{font:{size:11}}}
+    }
+  });
+  const barO = ()=>({
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'top',labels:{boxWidth:9,usePointStyle:true,padding:10,font:{size:11}}}},
+    scales:{
+      y:{ticks:{font:{size:11}},grid:{color:'#f0f3f8'},border:{dash:[4,4]}},
+      x:{grid:{display:false},ticks:{font:{size:11}}}
+    }
+  });
+
+  /* Website Views */
+  new Chart(document.getElementById('amWebViewsChart'),{type:'line',data:{
+    labels:months,
+    datasets:[{
+      label:'Website Views',data:[17500,12100,4794,5701,7193],
+      borderColor:'#0071CE',backgroundColor:'rgba(0,113,206,.08)',
+      fill:true,tension:.4,pointRadius:6,pointHoverRadius:8
+    }]
+  },options:lineO()});
+
+  /* Visits & Visitors */
+  new Chart(document.getElementById('amWebVisitsChart'),{type:'line',data:{
+    labels:months,
+    datasets:[
+      {label:'Visits',data:[8297,5512,2871,3162,3627],borderColor:'#001543',backgroundColor:'rgba(0,21,67,.06)',fill:false,tension:.4,pointRadius:5},
+      {label:'Visitors',data:[5701,4197,2098,2190,2612],borderColor:'#15F4EE',backgroundColor:'rgba(21,244,238,.08)',fill:false,tension:.4,pointRadius:5}
+    ]
+  },options:lineO()});
+
+  /* IG Views */
+  new Chart(document.getElementById('amIgViewsChart'),{type:'bar',data:{
+    labels:months,
+    datasets:[{
+      label:'IG Views',data:[277540,128520,103510,69820,146640],
+      backgroundColor:['#E1306C','#E1306C','#E1306C','#E1306C','#15F4EE'],
+      borderRadius:6,borderSkipped:false
+    }]
+  },options:barO()});
+
+  /* Avg Reach/Day */
+  new Chart(document.getElementById('amIgReachChart'),{type:'line',data:{
+    labels:months,
+    datasets:[{
+      label:'Avg Reach / Day',data:[2306,1102,787,478,1824],
+      borderColor:'#E1306C',backgroundColor:'rgba(225,48,108,.08)',
+      fill:true,tension:.4,pointRadius:6,
+      pointBackgroundColor:['#E1306C','#E1306C','#E1306C','#E1306C','#15F4EE']
+    }]
+  },options:lineO()});
+
+  /* Content Volume */
+  new Chart(document.getElementById('amIgContentChart'),{type:'bar',data:{
+    labels:months,
+    datasets:[
+      {label:'Stories',data:[289,167,75,180,90],backgroundColor:'rgba(0,113,206,.7)',borderRadius:4,borderSkipped:false},
+      {label:'Posts',data:[0,0,1,0,8],backgroundColor:'rgba(21,244,238,.8)',borderRadius:4,borderSkipped:false},
+      {label:'Reels',data:[0,3,2,0,5],backgroundColor:'rgba(225,48,108,.7)',borderRadius:4,borderSkipped:false}
+    ]
+  },options:{...barO(),scales:{...barO().scales,x:{...barO().scales.x,stacked:false}}}});
+
+  /* Follower Balance */
+  new Chart(document.getElementById('amIgFollBalance'),{type:'bar',data:{
+    labels:months,
+    datasets:[{
+      label:'Net Follower Change',data:[224,174,144,-122,-152],
+      backgroundColor:[224,174,144,-122,-152].map(v=>v>=0?'rgba(31,191,117,.75)':'rgba(229,72,77,.75)'),
+      borderRadius:6,borderSkipped:false
+    }]
+  },options:barO()});
+}
+
+}); // End DOMContentLoaded
+
+</script>
+</body>
+</html>
