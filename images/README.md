@@ -1,21 +1,16 @@
-# Photos for the Innerspeak website
+# Photos
 
-> **Note:** the JPGs currently in this folder are AI-generated stand-ins that
-> match the aesthetic of her real shoot. Overwrite them with her actual photos
-> (same filenames) before launch.
+The four JPGs here are AI-generated stand-ins that match the look of her
+real shoot, cropped so that no face is visible. To use her real photos,
+overwrite these files with the same filenames. No code changes are needed.
 
-Drop her photos into this folder with these exact filenames — the site picks
-them up automatically (until then, an elegant placeholder is shown):
-
-| Filename | Which photo to use | Where it appears |
+| File | Where it appears | Shape that works best |
 |---|---|---|
-| `hero.jpg` | Light studio photo — seated side-stretch pose (wide shot, lots of empty space) | Hero section, top of page |
-| `ritual.jpg` | Dark photo — kneeling, holding the smoking sage bundle | "Why energy work" section |
-| `sage.jpg` | Dark close-up — cross-legged, hand holding the sage bundle | "The Journey" section |
-| `about.jpg` | Light studio photo — seated from behind, hands in reverse prayer | About section |
-| `balance.jpg` | Light studio photo — standing one-legged pose, arms crossed (spare) | Optional / social sharing |
+| `hero.jpg` | Top of the page, right side | Portrait, subject in the lower half |
+| `ritual.jpg` | "Blocked energy speaks" section, wide image | Landscape or square |
+| `sage.jpg` | "Blocked energy speaks" section, narrow image | Portrait or square |
+| `about.jpg` | About section, small image | Portrait detail shot |
 
-Tips:
-- JPG format, roughly 1600px on the longest side, under ~400KB each
-  (use https://squoosh.app to compress before uploading).
-- Keep the filenames lowercase exactly as listed.
+Keep each file under about 300 KB (https://squoosh.app compresses well).
+If the new files have different pixel sizes, update the `width` and `height`
+attributes on the matching `<img>` tags in `index.html`.

@@ -1,37 +1,40 @@
-# Innerspeak — Chakra Cleansing & Energy Healing
+# Innerspeak
 
-An elegant, single-page website for Innerspeak: chakra cleansing, energy
-blockage removal and full energetic alignment sessions.
+A single-page website for Innerspeak: one-to-one chakra cleansing, blockage
+removal and energy alignment sessions.
 
-Built as a fast, dependency-free static site (pure HTML/CSS/JS) — no build
-step, no framework, nothing to maintain.
+Plain HTML, CSS and JavaScript. No build step and no dependencies. Fonts are
+self-hosted in `fonts/`, so the page makes no third-party requests.
 
-## Before going live — 3 things to do
+## Before launch
 
-1. **WhatsApp number** — currently dummy zeros. Search `index.html` for
-   `0000000000000` (two places) and replace with the real number in
-   international format, no `+` or spaces.
-2. **Photos** — add her five photos to the `images/` folder using the
-   filenames listed in `images/README.md`. Until then the site shows
-   elegant placeholder panels.
-3. **Content** — services, prices, testimonials and the About story are
-   polished placeholders. Edit them directly in `index.html` (all plain
-   text, clearly sectioned).
+1. **WhatsApp number.** Every "Book a session" link uses the placeholder
+   `0000000000000`. Replace it everywhere in `index.html` with the real number
+   in international format, digits only (no `+`, no spaces).
+2. **Client words.** The three quotes in the "Kind words" section are sample
+   wording and are labelled as such on the page. Replace them with real client
+   words and remove the `words__note` paragraph, or delete the whole section.
+3. **Photos.** See `images/README.md`.
+4. **Prices.** Set in the "Choose your session" section of `index.html`.
 
-## Publishing free with GitHub Pages
+## Structure
 
-Repo → **Settings → Pages → Deploy from a branch** → choose the branch and
-`/ (root)` → Save. The site goes live at
-`https://<username>.github.io/<repo-name>/` within a minute or two.
-A custom domain (e.g. `innerspeak.com`) can be attached on the same page.
+- `index.html` holds all content, in clearly commented sections.
+- `css/style.css` holds the design. Colours and fonts are variables at the top.
+- `js/main.js` runs the chakra explorer, the scroll reveal and the mobile menu.
+  The page still works with JavaScript turned off.
 
-## Design notes
+## Design
 
-- **Palette**: warm ivory, soft sand, charcoal ink, muted gold — calm,
-  premium, spa-like.
-- **Type**: Cormorant Garamond (display serif) + Jost (body sans), the
-  pairing used by high-end wellness brands.
-- **Conversion**: persistent "Book a Session" in the nav, a floating
-  WhatsApp button, and a closing CTA — every scroll position has a next step.
-- **Trust**: what-to-expect journey, testimonials, FAQ, and a clear
-  "complements, never replaces, medical care" disclaimer.
+- Monochrome palette taken from the black-and-white photography. The only
+  colour on the page is the seven chakras in the explorer.
+- Bodoni Moda for headings, Hanken Grotesk for text (both SIL Open Font
+  License).
+- Sharp corners everywhere; only the chakra marks are round.
+- Light theme only, by choice.
+
+## Publishing with GitHub Pages
+
+Repository Settings, then Pages, then "Deploy from a branch". Choose the
+branch and `/ (root)` and save. The repository must be public on a free plan.
+GitHub then rebuilds the site after every push to that branch.

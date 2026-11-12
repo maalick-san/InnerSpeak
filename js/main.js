@@ -1,76 +1,82 @@
-// Innerspeak — interactions: image slots, reveal-on-scroll, slider, mobile nav
+// Innerspeak: chakra explorer, scroll reveal, mobile menu.
+// The page works without this file: all seven chakra panels simply show in a column.
 
-// ---- Image slots: load each photo if present; keep the elegant placeholder if not ----
-document.querySelectorAll('.img-slot').forEach(function (slot) {
-  var file = slot.dataset.photo;
-  if (!file) return;
-  var img = document.createElement('img');
-  img.alt = slot.dataset.alt || '';
-  img.onerror = function () { img.remove(); }; // photo missing → styled placeholder stays
-  img.src = 'images/' + file;
-  slot.appendChild(img);
-});
-
-// ---- Reveal on scroll ----
-var observer = new IntersectionObserver(function (entries) {
-  entries.forEach(function (entry) {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      observer.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.12 });
-document.querySelectorAll('.reveal').forEach(function (el) { observer.observe(el); });
-
-// ---- Testimonial slider ----
 (function () {
-  var track = document.getElementById('sliderTrack');
-  var dotsWrap = document.getElementById('sliderDots');
-  if (!track || !dotsWrap) return;
-  var quotes = track.children.length;
-  var index = 0;
-  var timer;
+  'use strict';
 
-  for (var i = 0; i < quotes; i++) {
-    var dot = document.createElement('button');
-    dot.setAttribute('aria-label', 'Testimonial ' + (i + 1));
-    dot.dataset.index = i;
-    dot.addEventListener('click', function () {
-      go(parseInt(this.dataset.index, 10));
-      restart();
+  // ---- Chakra explorer (tabs with roving focus) ----
+  var explorer = document.getElementById('explorer');
+  if (explorer) {
+    var tabs = Array.prototype.slice.call(explorer.querySelectorAll('[role="tab"]'));
+    var panels = Array.prototype.slice.call(explorer.querySelectorAll('[role="tabpanel"]'));
+
+    var select = function (tab, moveFocus) {
+      tabs.forEach(function (t) {
+        var on = t === tab;
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        t.tabIndex = on ? 0 : -1;
+      });
+      panels.forEach(function (p) {
+        p.hidden = p.id !== tab.getAttribute('aria-controls');
+      });
+      if (moveFocus) tab.focus();
+    };
+
+    tabs.forEach(function (tab, i) {
+      tab.addEventListener('click', function () { select(tab, false); });
+      tab.addEventListener('keydown', function (e) {
+        var next = null;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') next = tabs[(i + 1) % tabs.length];
+        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') next = tabs[(i - 1 + tabs.length) % tabs.length];
+        if (e.key === 'Home') next = tabs[0];
+        if (e.key === 'End') next = tabs[tabs.length - 1];
+        if (next) {
+          e.preventDefault();
+          select(next, true);
+        }
+      });
     });
-    dotsWrap.appendChild(dot);
+
+    select(document.getElementById('tab-heart') || tabs[0], false);
   }
 
-  function go(i) {
-    index = i;
-    track.style.transform = 'translateX(-' + i * 100 + '%)';
-    Array.prototype.forEach.call(dotsWrap.children, function (d, j) {
-      d.classList.toggle('active', j === i);
+  // ---- Scroll reveal ----
+  var revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+    revealEls.forEach(function (el) { observer.observe(el); });
+  } else {
+    revealEls.forEach(function (el) { el.classList.add('is-visible'); });
+  }
+
+  // ---- Mobile menu ----
+  var toggle = document.getElementById('navToggle');
+  var links = document.getElementById('navLinks');
+  if (toggle && links) {
+    var setOpen = function (open) {
+      links.classList.toggle('is-open', open);
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      toggle.textContent = open ? 'Close' : 'Menu';
+    };
+    toggle.addEventListener('click', function () {
+      setOpen(!links.classList.contains('is-open'));
+    });
+    links.addEventListener('click', function (e) {
+      if (e.target.closest('a')) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
     });
   }
-  function next() { go((index + 1) % quotes); }
-  function restart() {
-    clearInterval(timer);
-    timer = setInterval(next, 6000);
-  }
-  go(0);
-  restart();
+
+  // ---- Footer year ----
+  var year = document.getElementById('year');
+  if (year) year.textContent = new Date().getFullYear();
 })();
-
-// ---- Mobile nav ----
-var toggle = document.getElementById('navToggle');
-var links = document.getElementById('navLinks');
-if (toggle && links) {
-  toggle.addEventListener('click', function () {
-    var open = links.classList.toggle('open');
-    toggle.setAttribute('aria-expanded', open);
-  });
-  links.querySelectorAll('a').forEach(function (a) {
-    a.addEventListener('click', function () { links.classList.remove('open'); });
-  });
-}
-
-// ---- Footer year ----
-var year = document.getElementById('year');
-if (year) year.textContent = new Date().getFullYear();
