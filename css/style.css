@@ -205,7 +205,7 @@ main > .hero {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 50% 78%;
+  object-position: 50% 82%;
 }
 
 /* ---------- Why ---------- */
@@ -228,8 +228,7 @@ main > .hero {
   height: clamp(320px, 42vw, 560px);
   object-fit: cover;
 }
-.why__images img:first-child { object-position: 42% 30%; }
-.why__images img:last-child { object-position: 50% 55%; }
+.why__images img:last-child { object-position: 50% 45%; }
 
 /* ---------- Chakra explorer ---------- */
 .explorer {
@@ -536,8 +535,8 @@ main > .faq {
     padding-block: 2.5rem 3.5rem;
     gap: 2.25rem;
   }
-  .hero__figure { height: 62vw; min-height: 260px; order: 2; }
-  .hero__figure img { object-position: 50% 70%; }
+  .hero__figure { height: 105vw; min-height: 320px; order: 2; }
+  .hero__figure img { object-position: 50% 85%; }
 
   .why__images { grid-template-columns: minmax(0, 1fr); }
   .why__images img { height: 72vw; }

@@ -26,7 +26,7 @@ self-hosted in `fonts/`, so the page makes no third-party requests.
 
 ## Design
 
-- Monochrome palette taken from the black-and-white photography. The only
+- Monochrome palette to match the black-and-white still-life photography. The only
   colour on the page is the seven chakras in the explorer.
 - Bodoni Moda for headings, Hanken Grotesk for text (both SIL Open Font
   License).
